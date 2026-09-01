@@ -10,7 +10,7 @@ app.use(express.json());
 // connectDB
 connectDB();
 
-// routes
+// auth_router => register and login
 app.use("/api/user", auth_router);
 
 const PORT = process.env.PORT || 3000;
