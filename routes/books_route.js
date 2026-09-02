@@ -10,5 +10,6 @@ const adminMiddleware = require("../middleware/admin_middleware");
 // get all books
 router.get("/all", userMiddleware, allBooksController);
 
+// to upload the book
 router.post("/add", userMiddleware, adminMiddleware, addBookController);
 module.exports = router;

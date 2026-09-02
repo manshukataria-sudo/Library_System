@@ -1,18 +1,14 @@
 const verify_admin = async (req, res, next) => {
   try {
     const userRole = req.userInfo.role;
-    if (userRole != "admin") {
+    if (userRole !== "admin") {
       return res.status(403).json({
         success: false,
-        message: "Admin rights! Only",
+        message: "Access denied! Admin rights required",
       });
     }
-    res.status(200).json({
-      success: true,
-      message: "Welcome admin",
-    });
+    next();
   } catch (e) {
-    console.log(e);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

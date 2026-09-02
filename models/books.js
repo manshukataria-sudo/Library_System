@@ -14,6 +14,12 @@ const bookSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    url: {
+      type: String,
+    },
+    publicId: {
+      type: String,
+    },
     issuedTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
