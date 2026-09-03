@@ -58,7 +58,6 @@ const registerUser = async (req, res) => {
         });
       });
   } catch (e) {
-    console.log("There is an error", e);
     res.status(500).json({
       success: false,
       message: "Unable to register",
@@ -119,7 +118,6 @@ const loginUser = async (req, res) => {
         });
       });
   } catch (e) {
-    console.log("There is an error", e);
     res.status(500).json({
       success: false,
       message: "Unable to login",
