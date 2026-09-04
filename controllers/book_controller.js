@@ -1,5 +1,6 @@
 const bookModel = require("../models/books");
 const { uploadData } = require("../config/upload_data_to_cloud");
+const fs = require("fs");
 const allBooksController = async (req, res) => {
   try {
     // use paging to display the books
@@ -51,6 +52,7 @@ const addBookController = async (req, res) => {
       url: result.url,
       publicId: result.publicId,
     });
+    fs.unlinkSync(req.file.path);
     res.status(201).json({
       success: true,
       message: "Book uploaded successfully",
