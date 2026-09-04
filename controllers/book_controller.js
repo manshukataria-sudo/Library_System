@@ -29,11 +29,11 @@ const allBooksController = async (req, res) => {
 // add book to db and cloud via this controller
 const addBookController = async (req, res) => {
   try {
-    const { title, author } = req.body;
-    if (!req.file || !title || !author) {
+    const bookInfo = req.;
+    if (!bookInfo && !req.file) {
       return res.status(404).json({
         success: false,
-        message: "Complete Book details are required",
+        message: "Book details required and PDF required",
       });
     }
     const result = await uploadData(req.file.path);
@@ -46,8 +46,8 @@ const addBookController = async (req, res) => {
 
     // upload the book to mongoDB
     const uploadBook = await bookModel.create({
-      title: title,
-      author: author,
+      title: bookInfo.title,
+      author: bookInfo.author,
       url: result.url,
       publicId: result.publicId,
     });
@@ -57,14 +57,12 @@ const addBookController = async (req, res) => {
       data: uploadBook,
     });
   } catch (e) {
-    console.log("error in book add controller", e);
     res.status(500).json({
       success: false,
       message: "Internal Server error",
     });
   }
 };
-
 module.exports = {
   allBooksController,
   addBookController,
