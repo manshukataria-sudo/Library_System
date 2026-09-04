@@ -1,9 +1,8 @@
-const cloudinary = require("./cloudinary");
+const cloudinary = require("../config/cloudinary");
 
-const uploadData = async () => {
+const uploadData = async (filepath) => {
   try {
     const result = await cloudinary.uploader.upload(filepath);
-    console.log("Data uploaded successfully");
 
     // the url and other to upload to mongoDB
     return {
@@ -11,7 +10,7 @@ const uploadData = async () => {
       publicId: result.public_id,
     };
   } catch (e) {
-    console.log("There is an errro while uploading to cloud", e);
+    console.log("There is an error while uploading to cloud", e);
   }
 };
 
