@@ -4,11 +4,37 @@ const fs = require("fs");
 const allBooksController = async (req, res) => {
   try {
     // use paging to display the books
+    // count total docs
+    const totalDocs = await bookModel.countDocuments({});
 
-    // fetching all books
-    const availBooks = await bookModel.find({});
+    // set the limit to display
+    const limit = parseInt(req.query.limit) || 2;
 
-    if (!availBooks) {
+    // set the page no.
+    const pageNo = parseInt(req.query.page) || 1;
+
+    // to skip docs
+    const skip = (pageNo - 1) * limit;
+
+    // total pages
+    const totalPages = Math.ceil(totalDocs / limit);
+    // fetch the page and send the response
+
+    // sort on the basis of
+    const sortBy = req.query.sortBy || "createdAt";
+
+    // sort order
+    const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
+
+    const sort = {};
+    sort[sortBy] = sortOrder;
+    const fetchedBooks = await bookModel
+      .find({})
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+
+    if (!fetchedBooks.length) {
       return res.status(404).json({
         success: true,
         message: "No Book to display",
@@ -16,8 +42,11 @@ const allBooksController = async (req, res) => {
     }
     res.status(200).json({
       success: true,
-      message: "All books fetched successfully",
-      Books: availBooks,
+      message: "Books fetched Successfully",
+      pageNo: pageNo,
+      totalPages: totalPages,
+      totalBooks: totalDocs,
+      Books: fetchedBooks,
     });
   } catch (e) {
     res.status(500).json({
