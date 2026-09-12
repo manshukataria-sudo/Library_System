@@ -14,6 +14,15 @@ const uploadData = async (filepath) => {
   }
 };
 
+const removeData = async (publicId) => {
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.log("There is an error while deleting from cloud", error);
+  }
+};
+
 module.exports = {
   uploadData,
+  removeData,
 };

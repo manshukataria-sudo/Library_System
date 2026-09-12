@@ -5,6 +5,7 @@ const bookUploadMiddleware = require("../middleware/book_upload_middleware");
 const {
   allBooksController,
   addBookController,
+  removeBookController,
 } = require("../controllers/book_controller");
 const adminMiddleware = require("../middleware/admin_middleware");
 
@@ -18,6 +19,14 @@ router.post(
   adminMiddleware,
   bookUploadMiddleware.single("pdf"),
   addBookController,
+);
+
+// to remove a book
+router.delete(
+  "/remove/:id",
+  userMiddleware,
+  adminMiddleware,
+  removeBookController,
 );
 
 module.exports = router;

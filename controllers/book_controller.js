@@ -1,5 +1,5 @@
 const bookModel = require("../models/books");
-const { uploadData } = require("../config/upload_data_to_cloud");
+const { uploadData, removeData } = require("../config/upload_data_to_cloud");
 const fs = require("fs");
 const allBooksController = async (req, res) => {
   try {
@@ -98,8 +98,33 @@ const addBookController = async (req, res) => {
 
 const removeBookController = async (req, res) => {
   try {
+    const bookId = req.params.id;
+    if (!bookId) {
+      return res.status(403).json({
+        success: false,
+        message: "Book ID required to delete",
+      });
+    }
+
+    // fetch book from DB
+    const fetchedBook = await bookModel.findById(bookId);
+    if (!fetchedBook) {
+      return res.status(403).json({
+        success: false,
+        message: "Book already deleted",
+      });
+    }
+
+    // delete book from cloud
+    await removeData(fetchedBook.publicId);
+
+    // delete from DB
+    await bookModel.deleteOne({ _id: bookId });
+    res.status(200).json({
+      success: true,
+      message: "Book removed successfully",
+    });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Internal Server error",
@@ -110,4 +135,5 @@ const removeBookController = async (req, res) => {
 module.exports = {
   allBooksController,
   addBookController,
+  removeBookController,
 };
