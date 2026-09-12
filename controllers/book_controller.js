@@ -61,7 +61,7 @@ const addBookController = async (req, res) => {
   try {
     const { title, author } = req.body;
     if (!req.file || !title || !author) {
-      return res.status(404).json({
+      return res.status(403).json({
         success: false,
         message: "Complete Book details are required",
       });
@@ -89,6 +89,17 @@ const addBookController = async (req, res) => {
     });
   } catch (e) {
     console.log("error in book add controller", e);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server error",
+    });
+  }
+};
+
+const removeBookController = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Internal Server error",

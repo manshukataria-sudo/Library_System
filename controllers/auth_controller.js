@@ -126,4 +126,60 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+// change password controller
+const changePassword = async (req, res) => {
+  try {
+    if (
+      !req.body ||
+      !req.body.email ||
+      !req.body.oldPassword ||
+      !req.body.newPassword
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "All credentials required",
+      });
+    }
+    // fetch the users old details
+    const { email, oldPassword, newPassword } = req.body;
+
+    // fetch user infor from DB
+    const fetchedUser = await userModel.findOne({ email });
+    if (!fetchedUser) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid Old credentials",
+      });
+    }
+
+    // checking the old password
+    const comparePassword = await bcrypt.compare(
+      oldPassword,
+      fetchedUser.password,
+    );
+    if (!comparePassword) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid Old credentials",
+      });
+    }
+
+    // hash the new password
+    const hashPassword = await bcrypt.hash(newPassword, 10);
+
+    // save to DB
+    fetchedUser.password = hashPassword;
+    await fetchedUser.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "password changed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+module.exports = { registerUser, loginUser, changePassword };
