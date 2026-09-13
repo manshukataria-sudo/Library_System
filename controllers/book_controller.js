@@ -175,9 +175,48 @@ const issueBookController = async (req, res) => {
     });
   }
 };
+
+const returnBookController = async (req, res) => {
+  try {
+    // fetch user from DB
+    const fetchUser = await userModel.findById(req.userInfo.userId);
+
+    // fetch book from DB
+    const bookInfo = await bookModel.findById(req.params.id);
+
+    // check if book, is in books_issued array
+    const bookIndex = fetchUser.books_issued.indexOf(req.params.id);
+    if (bookIndex == -1) {
+      return res.status(200).json({
+        success: false,
+        message: "Book is not issued to you",
+      });
+    }
+
+    // remove the book from the books_issued array
+    fetchUser.books_issued.splice(bookIndex, 1);
+    await fetchUser.save();
+
+    // update the bookInfo
+    bookInfo.isIssued = false;
+    await bookInfo.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Book returned. Kindly Submit to admin",
+    });
+  } catch (error) {
+    console.log("there is an error", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 module.exports = {
   allBooksController,
   addBookController,
   removeBookController,
   issueBookController,
+  returnBookController,
 };
