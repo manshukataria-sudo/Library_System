@@ -6,6 +6,7 @@ const {
   allBooksController,
   addBookController,
   removeBookController,
+  issueBookController,
 } = require("../controllers/book_controller");
 const adminMiddleware = require("../middleware/admin_middleware");
 
@@ -28,5 +29,8 @@ router.delete(
   adminMiddleware,
   removeBookController,
 );
+
+// issue book to user
+router.get("/issue/:id", userMiddleware, issueBookController);
 
 module.exports = router;

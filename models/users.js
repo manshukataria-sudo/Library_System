@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
       default: true,
     },
     books_issued: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "books",
     },
     role: {

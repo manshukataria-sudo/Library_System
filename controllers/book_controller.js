@@ -1,4 +1,5 @@
 const bookModel = require("../models/books");
+const userModel = require("../models/users");
 const { uploadData, removeData } = require("../config/upload_data_to_cloud");
 const fs = require("fs");
 const allBooksController = async (req, res) => {
@@ -132,8 +133,51 @@ const removeBookController = async (req, res) => {
   }
 };
 
+// book issue controller
+const issueBookController = async (req, res) => {
+  try {
+    const fetchUser = await userModel.findById(req.userInfo.userId);
+    const bookInfo = await bookModel.findById(req.params.id);
+
+    // if no book with id
+    if (!bookInfo) {
+      return res.status(404).json({
+        success: false,
+        message: "Book not available",
+      });
+    }
+
+    // if book is already issued
+    if (bookInfo.isIssued) {
+      return res.status(403).json({
+        success: false,
+        message: "Book is already issued",
+      });
+    }
+
+    // issue the book
+    fetchUser.books_issued.push(bookInfo._id);
+    await fetchUser.save();
+
+    // mark the issued book
+    bookInfo.isIssued = true;
+    await bookInfo.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Book Issued! Kindly Collect from counter",
+      BookInfo: bookInfo,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 module.exports = {
   allBooksController,
   addBookController,
   removeBookController,
+  issueBookController,
 };

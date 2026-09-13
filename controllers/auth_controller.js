@@ -94,6 +94,7 @@ const loginUser = async (req, res) => {
             {
               username: checkUser.username,
               email: email,
+              userId: checkUser._id,
               role: checkUser.role,
             },
             process.env.jwt_secret,
